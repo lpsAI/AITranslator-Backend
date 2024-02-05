@@ -31,9 +31,5 @@ Technologies used in the project:
 *   Vite
 *   ReactJS
 *   NodeJS
-*   OpenCV
+*   OpenCV.JS
 *   Microsoft Azure
-
-<h2>🛡️ License:</h2>
-
-This project is licensed under the
