@@ -1,41 +1,26 @@
-import { createRequire } from "module";
-import require from '../utils/require.js'
-const TextTranslationClient = require("@azure-rest/ai-translation-text").default
+import { initTranslationPath } from './translate-base.js'
 
-// const TextTranslationClient = require("@azure-rest/ai-translation-text").default
+export const azureTranslation = async (textTranslation, language) => {
 
-const apiKey = process.env.TEXT_TRANSLATOR_API_KEY || "47c7adebf3e84ed9a35c4d4c85bc05f6"
-const endpoint = process.env.ENDPOINT || "https://api.cognitive.microsofttranslator.com"
-const region = process.env.TEXT_TRANSLATOR_REGION || "southeastasia"
+  const inputText = [{ Text: textTranslation }];
+  let resData;
 
-const azureTranslation = async(textTranslation, language) => {
-
-  console.log("== Text translation sample ==");
-
-  const translateCredential = {
-    key: apiKey,
-    region,
-  };
-  const translationClient = new TextTranslationClient(endpoint,translateCredential);
-
-  const inputText = [{ text: textTranslation }];
-  const translateResponse = await translationClient.path("/translate").post({
-    body: inputText,
-    queryParameters: {
-      to: language,
-      from: "fil",
-    },
-  });
-
-  const translations = translateResponse.body;
-  for (const translation of translations) {
-    console.log(
-      `Text was translated to: '${translation?.translations[0]?.to}' and the result is: '${translation?.translations[0]?.text}'.`
-    );
+  try {
+    resData = (await initTranslationPath('translate', inputText, 'POST', 'en', language)).data;
+  } catch (error) {
+    throw error;
   }
-
-  return translations
+  
+  return resData;
 }
 
+export const detectLanguage = async (payload) => {
+  let resData;
+  try {
+    resData = (await initTranslationPath('detect', payload, 'POST')).data
+  } catch (error) {
+    throw error;
+  }
+  return resData
+}
 
-export default azureTranslation
