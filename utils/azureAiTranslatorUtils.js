@@ -4,9 +4,9 @@ const TextTranslationClient = require("@azure-rest/ai-translation-text").default
 
 // const TextTranslationClient = require("@azure-rest/ai-translation-text").default
 
-const apiKey = process.env.API_KEY
-const endpoint = process.env.API_ENDPOINT
-const region = process.env.REGION
+const apiKey = process.env.TEXT_TRANSLATOR_API_KEY || "47c7adebf3e84ed9a35c4d4c85bc05f6"
+const endpoint = process.env.ENDPOINT || "https://api.cognitive.microsofttranslator.com"
+const region = process.env.TEXT_TRANSLATOR_REGION || "southeastasia"
 
 const azureTranslation = async(textTranslation, language) => {
 
@@ -23,7 +23,7 @@ const azureTranslation = async(textTranslation, language) => {
     body: inputText,
     queryParameters: {
       to: language,
-      from: "en",
+      from: "fil",
     },
   });
 
@@ -33,6 +33,8 @@ const azureTranslation = async(textTranslation, language) => {
       `Text was translated to: '${translation?.translations[0]?.to}' and the result is: '${translation?.translations[0]?.text}'.`
     );
   }
+
+  return translations
 }
 
 
