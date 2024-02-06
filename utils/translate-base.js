@@ -7,14 +7,15 @@ import {v4} from 'uuid';
 
 /**
  * 
- * @param {'translate' | 'detect'} path 
+ * @param {'translate' | 'detect' | 'transliterate'} path 
  * @param {{Text: string}[]} data 
  * @param {string} method 
- * @param {string} fromLang optional
- * @param {string} toLang optional except path is translate
+ * @param {string} fromLang optional except path is transliterate
+ * @param {string} toLang optional except path is translate, transliterate
+ * @param {string} baseLang optional except path is transliterate
  * @returns 
  */
-export const initTranslationPath = (path, data, method, fromLang, toLang) => {
+export const initTranslationPath = (path, data, method, fromLang, toLang, baseLang) => {
     return axios({
       baseURL: endpoint,
       url: `/${path}`,
@@ -28,8 +29,11 @@ export const initTranslationPath = (path, data, method, fromLang, toLang) => {
       },
       params: {
           'api-version': '3.0',
-          'from': fromLang ?? 'en',
-          'to': toLang
+          language: baseLang ?? 'en',
+          from: fromLang ?? 'en',
+          to: toLang,
+          fromScript: fromLang,
+          toScript: toLang          
       },
       data,
       responseType: 'json'

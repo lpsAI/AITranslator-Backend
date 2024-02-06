@@ -21,6 +21,18 @@ export const detectLanguage = async (payload) => {
   } catch (error) {
     throw error;
   }
+  
+  return resData
+}
+
+export const transLiterateText = async (payload, fromLang, toLang, baseLang) => {
+  let resData;
+  try {
+    resData = (await initTranslationPath('transliterate', payload, 'POST', fromLang, toLang, baseLang)).data
+  } catch (error) {
+    throw error;
+  }
+
   return resData
 }
 
