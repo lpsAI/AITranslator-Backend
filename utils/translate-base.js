@@ -7,19 +7,14 @@ import {v4} from 'uuid';
 
 /**
  * 
- * @param {'translate' | 'detect' | 'transliterate'} path 
- * @param {{Text: string}[]} data 
- * @param {string} method 
- * @param {string} fromLang optional except path is transliterate
- * @param {string} toLang optional except path is translate, transliterate
- * @param {string} baseLang optional except path is transliterate
- * @returns 
+ * @param {Translation} transObjs 
+ * @returns {Promise<import("axios").AxiosResponse>}
  */
-export const initTranslationPath = (path, data, method, fromLang, toLang, baseLang) => {
+export const initTranslationPath = (transObjs) => {
     return axios({
       baseURL: endpoint,
-      url: `/${path}`,
-      method: method,
+      url: `/${transObjs.path}`,
+      method: transObjs.method,
       headers: {
           'Ocp-Apim-Subscription-Key': apiKey,
           // location required if you're using a multi-service or regional (not global) resource.
@@ -29,13 +24,14 @@ export const initTranslationPath = (path, data, method, fromLang, toLang, baseLa
       },
       params: {
           'api-version': '3.0',
-          language: baseLang ?? 'en',
-          from: fromLang ?? 'en',
-          to: toLang,
-          fromScript: fromLang,
-          toScript: toLang          
+          language: transObjs.baseLang ?? 'en',
+          from: transObjs.fromLang ?? 'en',
+          to: transObjs.toLang,
+          fromScript: transObjs.fromScript,
+          toScript: transObjs.toScript,
+          scope: transObjs.scope         
       },
-      data,
+      data: transObjs.data,
       responseType: 'json'
   })
 }

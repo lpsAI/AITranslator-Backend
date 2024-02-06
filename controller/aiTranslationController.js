@@ -1,6 +1,6 @@
-   import {azureTranslation, detectLanguage, transLiterateText} from '../utils/azureAiTranslatorUtils.js'
+   import {azureTranslation, detectLanguage, getListOfLanguages, transLiterateText} from '../utils/azureAiTranslatorUtils.js'
    export const createTranslation = async (req, res) => {
-    const translations = await azureTranslation(req.body.text, req.body.language)
+    const translations = await azureTranslation(req.body.text, req.body.language, req.body.fromLang)
     res.status(200).json({ translations: translations[0].translations})
 
   };
@@ -24,4 +24,10 @@
 
     res.status(200).json({transliterate: transliterate})
 
+  }
+
+  export const getLanguages = async (_, res) => {
+    const languages = await getListOfLanguages();
+
+    res.status(200).json({languages});
   }
