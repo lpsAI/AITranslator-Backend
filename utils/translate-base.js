@@ -1,10 +1,10 @@
 
-const apiKey = process.env.TEXT_TRANSLATOR_API_KEY || "47c7adebf3e84ed9a35c4d4c85bc05f6"
+const apiKey = process.env.TEXT_TRANSLATOR_API_KEY
 const endpoint = process.env.ENDPOINT || "https://api.cognitive.microsofttranslator.com"
 const region = process.env.TEXT_TRANSLATOR_REGION || "southeastasia"
 
 // For Azure Blob Storage
-const blobStorageConnectionString = process.env.BLOB_ACCOUNT_CONNECTION_STRING || 'DefaultEndpointsProtocol=https;AccountName=jbazureai9640666989;AccountKey=ePpkmqLCZaZdl0qhur+3Fp6cwA1YlvhvjEgKList8G+dCSPNwldhRofoSi2CQgxXOJ6IurkwRllH+ASt7V0bEQ==;EndpointSuffix=core.windows.net';
+const blobStorageConnectionString = process.env.BLOB_ACCOUNT_CONNECTION_STRING;
 import { BlobServiceClient } from "@azure/storage-blob"
 import axios from "axios"
 import {v4} from 'uuid';
