@@ -1,14 +1,15 @@
-
-const apiKey = process.env.TEXT_TRANSLATOR_API_KEY
-const endpoint = process.env.ENDPOINT || "https://api.cognitive.microsofttranslator.com"
-const region = process.env.TEXT_TRANSLATOR_REGION || "southeastasia"
-
-// For Azure Blob Storage
-const blobStorageConnectionString = process.env.BLOB_ACCOUNT_CONNECTION_STRING;
+const blobStorageConnectionString = process.env.BLOB_ACCOUNT_CONNECTION_STRING
 import { BlobServiceClient } from "@azure/storage-blob"
 import axios from "axios"
 import {v4} from 'uuid';
 
+const apiKey = process.env.TEXT_TRANSLATOR_API_KEY
+const endpoint = process.env.ENDPOINT
+const region = process.env.TEXT_TRANSLATOR_REGION
+
+console.log(apiKey, endpoint, region)
+
+// For Azure Blob Storage
 /**
  * 
  * @param {Translation} transObjs 
@@ -41,5 +42,6 @@ export const initTranslationPath = (transObjs) => {
 }
 
 export const initAZBlobStorage = () => {
+    console.log(blobStorageConnectionString)
     return BlobServiceClient.fromConnectionString(blobStorageConnectionString);
 }
