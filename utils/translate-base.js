@@ -7,8 +7,6 @@ const apiKey = process.env.TEXT_TRANSLATOR_API_KEY
 const endpoint = process.env.ENDPOINT
 const region = process.env.TEXT_TRANSLATOR_REGION
 
-console.log(apiKey, endpoint, region)
-
 // For Azure Blob Storage
 /**
  * 
@@ -42,6 +40,5 @@ export const initTranslationPath = (transObjs) => {
 }
 
 export const initAZBlobStorage = () => {
-    console.log(blobStorageConnectionString)
     return BlobServiceClient.fromConnectionString(blobStorageConnectionString);
 }

@@ -1,7 +1,7 @@
 // routes/userRoutes.js
 import express from 'express';
 import {  createTranslation, detectLang, transLiterate, getLanguages } from '../controller/aiTranslationController.js'
-import { fileDownload, fileUpload, retrieveAllImgs } from '../controller/aiBlobStorageController.js';
+import { fileDownload, fileUpload, initContainer, retrieveAllImgs } from '../controller/aiBlobStorageController.js';
 
 
 const router = express.Router();
@@ -14,8 +14,8 @@ router.post('/v1/detect', detectLang);
 router.post('/v1/translib',transLiterate);
 
 // for blob storage
-router.post('/v1/upload', fileUpload)
-router.post('/v1/download', fileDownload)
-router.get('/v1/images/all', retrieveAllImgs)
+router.post('/v1/upload', initContainer, fileUpload)
+router.post('/v1/download', initContainer, fileDownload)
+router.get('/v1/images/all', initContainer, retrieveAllImgs)
 
 export default router;

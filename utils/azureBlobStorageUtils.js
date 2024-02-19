@@ -8,6 +8,7 @@ import { initAZBlobStorage } from "./translate-base.js"
  */
 export const uploadImg = async (file, blobContentType) => {
   let uploadBlobResponse;
+  let blockBlobClient;
   
   try {
     const fileName = `${v4().toString()}_${new Date().getTime()}`;
@@ -15,7 +16,7 @@ export const uploadImg = async (file, blobContentType) => {
     
     const containerClient = initAZBlobStorage().getContainerClient('translate-img');
     
-    const blockBlobClient = containerClient.getBlockBlobClient(fileName);
+    blockBlobClient = containerClient.getBlockBlobClient(fileName);
   
     uploadBlobResponse =await blockBlobClient.upload(data, data.length, {
       blobHTTPHeaders: {
@@ -27,7 +28,14 @@ export const uploadImg = async (file, blobContentType) => {
     throw new Error(error.message);
   }
 
-  return uploadBlobResponse;
+  const isUploadSuccessful = uploadBlobResponse._response.status === 201;
+  const linkUrl = `${process.env.LINK_URL}/${blockBlobClient.containerName}/${blockBlobClient.name}`;
+
+  return {
+    status: uploadBlobResponse._response.status,
+    [isUploadSuccessful ? 'link': 'error']: 
+      isUploadSuccessful ? linkUrl : `Error uploading document ${blockBlobClient.name} to container ${blockBlobClient.containerName}`
+  };
 }
 
 /**
@@ -70,6 +78,12 @@ export const getAllImgs = async () => {
   }
 
   return listOfArrays;
+}
+
+export const initializeContainer  = async () => {
+  return await initAZBlobStorage().getContainerClient('translate-img').createIfNotExists({
+    access: 'container'
+  });
 }
 
 

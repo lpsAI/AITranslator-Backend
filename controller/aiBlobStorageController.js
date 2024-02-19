@@ -1,5 +1,5 @@
 import busboy from "busboy"
-import { downloadImg, getAllImgs, uploadImg } from "../utils/azureBlobStorageUtils.js";
+import { downloadImg, getAllImgs, initializeContainer, uploadImg } from "../utils/azureBlobStorageUtils.js";
 
 /**
  * 
@@ -21,25 +21,34 @@ export const fileUpload = (req, res) => {
       base64Data = buffer;
     })
   }).on('finish', async () => {
-    const upload = await uploadImg(base64Data, mimeType)
-    if (upload._response.status !== 201) {
-      throw new Error(
-        `Error uploading document ${blockBlobClient.name} to container ${blockBlobClient.containerName}`
-      );
-    }
-    res.status(upload._response.status).json({message: `Upload succesful! Reference ID ${upload.requestId}`});
+    const resJson = await uploadImg(base64Data, mimeType);
+    res.status(resJson.status).json(resJson);
     res.end();
   });
 
   req.pipe(initBusBoy);
 
+}
 
+/**
+ * 
+ * @param {import("express").Request} _ unused request
+ * @param {import("express").Response} _2 unused response
+ * @param {import("express").NextFunction} next continue if container is created
+ */
+export const initContainer = (_, _2, next) => {
+  initializeContainer().then(() => {
+    next();
+  }).catch(error => {
+    throw new Error(error.message);
+  })
 }
 
 /**
  * 
  * @param {import("express").Request} req 
  * @param {import("express").Response} res 
+ * @returns {{downloadedImg: string}}
  */
 export const fileDownload = (req, res) => {
   const downloadedImg = downloadImg(req.body.filename);
@@ -47,6 +56,12 @@ export const fileDownload = (req, res) => {
   res.status(200).json({downloadedImg});
 }
 
+/**
+ * 
+ * @param {import("express").Request} req 
+ * @param {import("express").Response} res 
+ * @returns {{listOfFiles: import("@azure/storage-blob").BlobItem[] }}
+ */
 export const retrieveAllImgs = async (req, res) => {
   const listOfFiles = await getAllImgs();
 
