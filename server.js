@@ -1,8 +1,11 @@
 import './env.js'
 import express from 'express';
 import aiRoutes from './routes/aiTranslationRoutes.js'
+import cors from 'cors'
 const app = express();
 const port = process.env.NODE_PORT;
+
+app.use(cors())
 
 app.use(express.json());
 
