@@ -48,7 +48,10 @@ export const getListOfLanguages = async () => {
   try {
     resData = (await initTranslationPath(transObj)).data.translation;
    
-    resData = Object.keys(resData).map(key => Object.assign({ [key]: resData[key].name}));    
+    resData = Object.keys(resData).map(key => Object.assign({ 
+      langId: key,
+      langName: resData[key].name
+    }));    
 
   } catch (error) {
     throw error;
