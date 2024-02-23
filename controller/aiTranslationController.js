@@ -28,8 +28,9 @@ export const transLiterate = async (req, res) => {
 
 }
 
-export const getLanguages = async (_, res) => {
+export const getLanguages = async (req, res) => {
   const languages = await getListOfLanguages();
+  const reqlanguage = req.acceptsLanguages();
+  res.status(200).json({ reqlanguage, languages });
 
-  res.status(200).json({ languages });
 }
