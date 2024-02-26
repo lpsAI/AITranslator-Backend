@@ -1,3 +1,4 @@
+import { LanguaeLocales } from '../model/LanguageLocale.js';
 import { azureTranslation, detectLanguage, getListOfLanguages, transLiterateText } from '../utils/azureAiTranslatorUtils.js'
 
 
@@ -32,4 +33,10 @@ export const getLanguages = async (_, res) => {
   const languages = await getListOfLanguages();
 
   res.status(200).json({ languages });
+}
+
+export const getLocalLang = async (_, res) => {
+  const languageLocale = LanguaeLocales.map(item => item = {locale: item.Locale});
+
+  res.status(200).json({languageLocale});
 }

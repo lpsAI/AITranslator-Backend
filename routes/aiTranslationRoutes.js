@@ -1,6 +1,6 @@
 // routes/userRoutes.js
 import express from 'express';
-import {  createTranslation, detectLang, transLiterate, getLanguages } from '../controller/aiTranslationController.js'
+import {  createTranslation, detectLang, transLiterate, getLanguages, getLocalLang } from '../controller/aiTranslationController.js'
 import { fileDownload, fileUpload, initContainer, retrieveAllImgs } from '../controller/aiBlobStorageController.js';
 
 
@@ -8,6 +8,7 @@ const router = express.Router();
 
 // Define routes and link them to controller methods
 router.get('/v1/getLang', getLanguages)
+router.get('/v1/getLocaleLang', getLocalLang)
 
 router.post('/v1/ai', createTranslation);
 router.post('/v1/detect', detectLang);
