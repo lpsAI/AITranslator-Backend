@@ -29,14 +29,14 @@ export const transLiterate = async (req, res) => {
 
 }
 
-export const getLanguages = async (req, res) => {
+export const getLanguages = async (_, res) => {
   const languages = await getListOfLanguages();
-  const reqlanguage = req.acceptsLanguages();
-  res.status(200).json({ reqlanguage, languages });
+
+  res.status(200).json({ languages });
 }
 
 export const getLocalLang = async (_, res) => {
-  const languageLocale = LanguaeLocales.map(item => item = {locale: item.Locale});
+  const languageLocale = LanguaeLocales.map(item => item = {locale: item.Locale, label: item.Language});
 
   res.status(200).json({languageLocale});
 }
