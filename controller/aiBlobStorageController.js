@@ -7,27 +7,34 @@ import { downloadImg, getAllImgs, initializeContainer, uploadImg } from "../util
  * @param {import("express").Response} res 
  */
 export const fileUpload = (req, res) => {
-  const initBusBoy = busboy({ headers: req.headers });
-  let base64Data = '';
-  let mimeType = '';
+  return new Promise((resolve, reject) => {
+    const initBusBoy = busboy({ headers: req.headers });
+    let base64Data = '';
+    let mimeType = '';
 
-  initBusBoy.on('file', (name, file, info) => {
-    mimeType = info.mimeType;
-    file.setEncoding('base64');
-    let buffer = '';
-    file.on('data', rawData => {
-      buffer += rawData;
-    }).on('end', () => {
-      base64Data = buffer;
-    })
-  }).on('finish', async () => {
-    const resJson = await uploadImg(base64Data, mimeType);
-    res.status(resJson.status).json(resJson);
-    res.end();
+    initBusBoy.on('file', (name, file, info) => {
+      mimeType = info.mimeType;
+      file.setEncoding('base64');
+      let buffer = '';
+      file.on('data', rawData => {
+        buffer += rawData;
+      }).on('end', () => {
+        base64Data = buffer;
+      });
+    }).on('finish', async () => {
+      const resJson = await uploadImg(base64Data, mimeType);
+      res.status(resJson.status).json(resJson);
+      res.end();
+      resolve(resJson.link)
+    });
+
+    req.pipe(initBusBoy);
+
+    // Handle any errors
+    initBusBoy.on('error', err => {
+      reject(err);
+    });
   });
-
-  req.pipe(initBusBoy);
-
 }
 
 /**

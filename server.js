@@ -1,9 +1,11 @@
 import './env.js'
 import express from 'express';
+import require from './utils/require.js';
 import aiRoutes from './routes/aiTranslationRoutes.js'
 import cors from 'cors';
-import {Server} from 'socket.io';
-import {createServer } from 'http'
+const bodyParser = require('body-parser');
+import { Server } from 'socket.io';
+import { createServer } from 'http'
 
 const app = express();
 const port = process.env.NODE_PORT;
@@ -21,6 +23,9 @@ app.use(cors({
 app.use(cors())
 
 app.use(express.json());
+
+app.use(bodyParser.urlencoded({ extended: true }))
+
 
 serverSocket.on('connection', (socket) => {
   console.log('New user connected ' + socket.id);
