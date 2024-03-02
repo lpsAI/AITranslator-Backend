@@ -5,22 +5,31 @@ import axios from 'axios'
 import imageAnalyzer from "../utils/imageAnalyzer.js"
 
 export const analyzeImage = async (req, res) => {
-  const uploadedUrl = await fileUpload(req, res)
-  
-  const detectedText = await imageAnalyzer(uploadedUrl)
 
-  const translatedText = await axios.post(BASE_URL + TRANSLATE_URL, detectedText)
+  try {
+    const { resJson, jsonBody } = await fileUpload(req);
 
-  console.log(detectedText)
+    const imageLink = resJson.link;
 
+    const detectedText = await imageAnalyzer(imageLink);
 
-  const response = {
-    imageUrl: uploadedUrl,
-    detectedText: detectedText,
-    translatedText: translatedText
-  } 
+    const translatedTextResponse = await axios.post(BASE_URL + TRANSLATE_URL, {
+      text: detectedText.replace(/\n/g, ''),
+      language: jsonBody.language
+    });
 
-  res.status(200).json(response)
+    const translatedText = translatedTextResponse.data;
 
-    }
+    const response = {
+      imageUrl: imageLink,
+      detectedText: detectedText.replace(/\n/g, ''),
+      translatedText: translatedText
+    };
+
+    res.status(200).json(response);
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ error: 'An error occurred while analyzing the image' });
+  }
+};
 
