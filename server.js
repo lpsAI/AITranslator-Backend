@@ -9,12 +9,6 @@ import { createServer } from 'http'
 
 const app = express();
 const port = process.env.NODE_PORT;
-const server = createServer(app);
-const serverSocket = new Server(server, {
-  cors: {
-    origin: '*'
-  }
-});
 
 app.use(cors({
   origin: '*'
@@ -50,6 +44,6 @@ app.get('/healthcheck', (req, res) => {
 })
 
 // Start the server
-server.listen(port, () => {
+app.listen(port, () => {
   console.log(`Server is running at http://localhost:${port}`);
 });
