@@ -26,7 +26,6 @@ export const fileUpload = (req, res) => {
         jsonBody[fieldname] = val
       }).on('finish', async () => {
           try {
-              console.log(jsonBody)
               const resJson = await uploadImg(base64Data, mimeType);
               resolve({resJson, jsonBody});
           } catch (error) {
