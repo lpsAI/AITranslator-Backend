@@ -10,6 +10,7 @@ export const azureTranslation = async (textTranslation, language, fromLang = 'en
   try {
     resData = (await initTranslationPath(transObj)).data;
   } catch (error) {
+    console.error(error);
     throw error;
   }
   
