@@ -2,10 +2,14 @@ const blobStorageConnectionString = process.env.BLOB_ACCOUNT_CONNECTION_STRING
 import { BlobServiceClient } from "@azure/storage-blob"
 import axios from "axios"
 import {v4} from 'uuid';
-
 const apiKey = process.env.TEXT_TRANSLATOR_API_KEY
 const endpoint = process.env.ENDPOINT
 const region = process.env.TEXT_TRANSLATOR_REGION
+
+// Vision
+const visionEndpoint = process.env.COMPUTER_VISION_ENDPOINT;
+const visionKey = process.env.COMPUTER_VISION_KEY;
+const visionApiVersion = process.env.COMPUTER_VISION_API_VERSION;
 
 // For Azure Blob Storage
 /**
@@ -41,4 +45,32 @@ export const initTranslationPath = (transObjs) => {
 
 export const initAZBlobStorage = () => {
     return BlobServiceClient.fromConnectionString(blobStorageConnectionString);
+}
+
+/**
+ * 
+ * @param {string} url
+ * @param {'POST' | 'GET'} method
+ * @returns {Promise<import("axios").AxiosResponse>} 
+ */
+export const initVisionPath = (url, method, language) => {
+   return axios({
+    baseURL: `${visionEndpoint}`,
+    url: `/computervision/imageanalysis:analyze?api-version=${visionApiVersion}`,
+    method,
+    headers: {
+        'Ocp-Apim-Subscription-Key': visionKey,
+        // location required if you're using a multi-service or regional (not global) resource.
+        'Ocp-Apim-Subscription-Region': region,
+        'Content-type': 'application/json',
+        'X-ClientTraceId': v4().toString()
+    },
+    params: {
+        features: 'read',
+        language
+    },
+    data: {url},
+    responseType: 'json'
+   })
+
 }
