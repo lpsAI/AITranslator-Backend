@@ -5,10 +5,10 @@ import { downloadImg, getAllImgs, initializeContainer, uploadImg } from "../util
  * 
  * @param {import("express").Request} req 
  * @param {import("express").Response} res 
+ * @param {import("express").NextFunction} next
  */
-export const fileUpload = (req, res) => {
-  return new Promise((resolve, reject) => {
-    const initBusBoy = busboy({ headers: req.headers });
+export const fileUpload = (req, res, next) => {
+  const initBusBoy = busboy({ headers: req.headers });
     let base64Data = '';
     let mimeType = '';
     let jsonBody = {}
@@ -27,9 +27,11 @@ export const fileUpload = (req, res) => {
     }).on('finish', async () => {
       try {
         const resJson = await uploadImg(base64Data, mimeType);
-        resolve({ resJson, jsonBody });
+        res.locals.jsonBody = jsonBody;
+        res.locals.resJson = resJson;
+        next();
       } catch (error) {
-        reject(error);
+        throw error;
       }
     });
 
@@ -37,10 +39,9 @@ export const fileUpload = (req, res) => {
 
     // Handle any errors
     initBusBoy.on('error', err => {
-      reject(err);
+      throw err;
     });
-  });
-}
+  }
 
 /**
  * 

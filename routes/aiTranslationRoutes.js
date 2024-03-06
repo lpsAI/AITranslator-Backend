@@ -1,7 +1,7 @@
 // routes/userRoutes.js
 import express from 'express';
 import {  createTranslation, detectLang, transLiterate, getLanguages, getLocalLang } from '../controller/aiTranslationController.js'
-import { fileDownload, fileUploadOnly, initContainer, retrieveAllImgs } from '../controller/aiBlobStorageController.js';
+import { fileDownload, fileUpload, fileUploadOnly, initContainer, retrieveAllImgs } from '../controller/aiBlobStorageController.js';
 import { analyzeImage } from '../controller/aiImageAnalyzerController.js'
 
 
@@ -21,6 +21,7 @@ router.post('/v1/download', initContainer, fileDownload)
 router.get('/v1/images/all', initContainer, retrieveAllImgs)
 
 // For image analyzer
-router.post('/v1/imageAnalyzer', initContainer, analyzeImage)
+// router.post('/v1/imageAnalyzer', initContainer, analyzeImage)
+router.post('/v1/imageAnalyzer', initContainer, fileUpload, analyzeImage)
 
 export default router;

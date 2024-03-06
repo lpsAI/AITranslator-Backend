@@ -1,11 +1,14 @@
-import { fileUpload } from "../controller/aiBlobStorageController.js";
+// import { fileUpload } from "../controller/aiBlobStorageController.js";
 import { azureTranslation } from "../utils/azureAiTranslatorUtils.js";
 import { initVisionPath } from "./translate-base.js";
 
-export default async function handleImageTranslation(req, _) {
+/**
+ * 
+ */
+export default async function handleImageTranslation(resJson,  jsonBody) {
   let response;
   try {
-    const { resJson, jsonBody } = await fileUpload(req);
+    // const { resJson, jsonBody } = await fileUpload(req);
     const url = resJson.link;
     const { fromLanguage, toLanguage } = jsonBody;
     const detectedText = await azureImageAnalyzer(url, fromLanguage);
