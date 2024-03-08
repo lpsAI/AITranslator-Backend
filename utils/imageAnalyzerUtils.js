@@ -11,12 +11,21 @@ export default async function handleImageTranslation(resJson,  jsonBody) {
     // const { resJson, jsonBody } = await fileUpload(req);
     const url = resJson.link;
     const { fromLanguage, toLanguage } = jsonBody;
-    const detectedText = await azureImageAnalyzer(url, fromLanguage);
+    const rawResult = await azureImageAnalyzer(url, fromLanguage);
     // const translationTextResponse = await azureTranslation(
     //   detectedText,
     //   toLanguage,
     //   fromLanguage
     // );
+
+    let detectedText = [];
+    rawResult.readResult.blocks.forEach(aBlock => {
+      aBlock.lines.forEach(aLine => {
+        detectedText.push(aLine.text);
+      })
+    })
+        
+    detectedText = detectedText.join(' ').trim();
 
     response = {
       imageUrl: url,
@@ -39,8 +48,8 @@ export default async function handleImageTranslation(resJson,  jsonBody) {
 async function azureImageAnalyzer(url, fromLang) {
   let text;
   try {
-    const resData = (await initVisionPath(url, 'POST', fromLang)).data;
-    text = resData.readResult.content.replaceAll(/(\r\n|\n|\r)/gm, " ");
+    text = (await initVisionPath(url, 'POST', fromLang)).data;
+    // text = resData.readResult.content.replaceAll(/(\r\n|\n|\r)/gm, " ");
   } catch (error) {
     throw error;
   }

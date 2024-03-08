@@ -66,7 +66,7 @@ export const initVisionPath = (url, method, language) => {
         'X-ClientTraceId': v4().toString()
     },
     params: {
-        features: 'read',
+        features: ['read'].toString(), // ['caption', 'denseCaptions']
         language
     },
     data: {url},
