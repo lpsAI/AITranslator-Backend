@@ -10,6 +10,7 @@ export default async function handleImageTranslation(resJson,  jsonBody) {
   try {
     // const { resJson, jsonBody } = await fileUpload(req);
     const url = resJson.link;
+    let status = 200;
     const { fromLanguage, toLanguage } = jsonBody;
     const rawResult = await azureImageAnalyzer(url, fromLanguage);
     // const translationTextResponse = await azureTranslation(
@@ -19,15 +20,21 @@ export default async function handleImageTranslation(resJson,  jsonBody) {
     // );
 
     let detectedText = [];
-    rawResult.readResult.blocks.forEach(aBlock => {
-      aBlock.lines.forEach(aLine => {
-        detectedText.push(aLine.text);
+    if (rawResult && rawResult.readResult) {
+      rawResult.readResult.blocks.forEach(aBlock => {
+        aBlock.lines.forEach(aLine => {
+          detectedText.push(aLine.text);
+        })
       })
-    })
+    } else {
+      status = 400;
+      detectedText = []
+    }
         
-    detectedText = detectedText.join(' ').trim();
+    detectedText = detectedText && detectedText.length != 0 ? detectedText.join(' ').trim() : ''
 
     response = {
+      status,
       imageUrl: url,
       detectedText,
       // translationTextResponse: translationTextResponse[0].translations,
@@ -36,6 +43,7 @@ export default async function handleImageTranslation(resJson,  jsonBody) {
     return response;
   } catch (error) {
     console.error(error);
+    throw error;
   }
 }
 
