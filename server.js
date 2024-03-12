@@ -41,11 +41,11 @@ app.use(compression())
 
 app.use('/api', aiRoutes);
 
-app.use((err, req, res, next) => {
-  // Log the error message at the error level
-  logger.error(err.message);
-  res.status(500).send({err: err.message});
-});
+// app.use((err, req, res, next) => {
+//   // Log the error message at the error level
+//   logger.error(err.message);
+//   res.status(500).send({err: err.message});
+// });
 
 app.get("/", (req, res) => {
   res.send("API is running...")
