@@ -31,7 +31,8 @@ export const fileUpload = (req, res, next) => {
         res.locals.resJson = resJson;
         next();
       } catch (error) {
-        throw error;
+        console.error(error.message)
+        next(error);
       }
     });
 
@@ -39,7 +40,7 @@ export const fileUpload = (req, res, next) => {
 
     // Handle any errors
     initBusBoy.on('error', err => {
-      throw err;
+      next(err);
     });
   }
 
@@ -53,7 +54,8 @@ export const initContainer = (_, _2, next) => {
   initializeContainer().then(() => {
     next();
   }).catch(error => {
-    throw new Error(error.message);
+    console.error(error.message);
+    next(error);
   })
 }
 
@@ -85,8 +87,9 @@ export const retrieveAllImgs = async (req, res) => {
  * 
  * @param {import("express").Request} req 
  * @param {import("express").Response} res 
+ * @param {import("express").NextFunction} next
  */
-export const fileUploadOnly = async (req, res) => {
+export const fileUploadOnly = async (req, res, next) => {
   const initBusBoy = busboy({ headers: req.headers });
   let base64Data = '';
   let mimeType = '';
@@ -109,6 +112,8 @@ export const fileUploadOnly = async (req, res) => {
       res.status(500).json({error});
     }
   });
+
+  res.on('error', err => next(err));
 
   res.pipe(initBusBoy);
 }
