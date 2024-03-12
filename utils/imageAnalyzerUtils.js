@@ -1,6 +1,6 @@
 // import { fileUpload } from "../controller/aiBlobStorageController.js";
 // import { azureTranslation } from "../utils/azureAiTranslatorUtils.js";
-import { logger } from "../server.js";
+import logger from "../logger/logger.js";
 import { initVisionPath } from "./translate-base.js";
 
 /**

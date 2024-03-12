@@ -1,6 +1,6 @@
 import busboy from "busboy"
 import { downloadImg, getAllImgs, initializeContainer, uploadImg } from "../utils/azureBlobStorageUtils.js";
-import { logger } from "../server.js";
+import logger from "../logger/logger.js";
 
 /**
  * 

@@ -1,5 +1,5 @@
+import logger from '../logger/logger.js';
 import { Translation } from '../model/Translation.js';
-import { logger } from '../server.js';
 import { initTranslationPath } from './translate-base.js'
 
 export const azureTranslation = async (textTranslation, language, fromLang = 'en') => {

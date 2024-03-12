@@ -3,9 +3,11 @@ import express from 'express';
 import {  createTranslation, detectLang, transLiterate, getLanguages, getLocalLang } from '../controller/aiTranslationController.js'
 import { fileDownload, fileUpload, fileUploadOnly, initContainer, retrieveAllImgs } from '../controller/aiBlobStorageController.js';
 import { analyzeImage } from '../controller/aiImageAnalyzerController.js'
+import { errorLoggerMiddleware, loggerMiddleware } from '../logger/logger.js';
 
 
 const router = express.Router();
+router.use(loggerMiddleware);
 
 // Define routes and link them to controller methods
 router.get('/v1/getLang', getLanguages)
@@ -23,5 +25,6 @@ router.get('/v1/images/all', initContainer, retrieveAllImgs)
 // For image analyzer
 // router.post('/v1/imageAnalyzer', initContainer, analyzeImage)
 router.post('/v1/imageAnalyzer', initContainer, fileUpload, analyzeImage)
+router.use(errorLoggerMiddleware);
 
 export default router;
