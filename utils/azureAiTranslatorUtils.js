@@ -1,4 +1,5 @@
 import { Translation } from '../model/Translation.js';
+import { logger } from '../server.js';
 import { initTranslationPath } from './translate-base.js'
 
 export const azureTranslation = async (textTranslation, language, fromLang = 'en') => {
@@ -10,7 +11,7 @@ export const azureTranslation = async (textTranslation, language, fromLang = 'en
   try {
     resData = (await initTranslationPath(transObj)).data;
   } catch (error) {
-    console.error(error);
+    logger.error(error.message);
     throw new Error('Error on azureTranslation');
   }
   
@@ -24,7 +25,7 @@ export const detectLanguage = async (payload) => {
   try {
     resData = (await initTranslationPath(transObj)).data
   } catch (error) {
-    console.error(error);
+    logger.error(error.message);
     throw new Error('Error on detectLanguage');
   }
 
@@ -38,7 +39,7 @@ export const transLiterateText = async (payload, fromLang, toLang, baseLang) => 
   try {
     resData = (await initTranslationPath(transObj)).data
   } catch (error) {
-    console.error(error);
+    logger.error(error.message);
     throw new Error('Error on transLiterateText');
   }
 
@@ -57,7 +58,7 @@ export const getListOfLanguages = async () => {
     }));    
 
   } catch (error) {
-    console.error(error);
+    logger.error(error.message);
     throw new Error('Error on getListOfLanguages');
   }
 

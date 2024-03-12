@@ -1,5 +1,6 @@
 import busboy from "busboy"
 import { downloadImg, getAllImgs, initializeContainer, uploadImg } from "../utils/azureBlobStorageUtils.js";
+import { logger } from "../server.js";
 
 /**
  * 
@@ -31,7 +32,7 @@ export const fileUpload = (req, res, next) => {
         res.locals.resJson = resJson;
         next();
       } catch (error) {
-        console.error(error.message)
+        logger.error(error.message)
         next(error);
       }
     });
@@ -54,7 +55,7 @@ export const initContainer = (_, _2, next) => {
   initializeContainer().then(() => {
     next();
   }).catch(error => {
-    console.error(error.message);
+    logger.error(error.message);
     next(error);
   })
 }

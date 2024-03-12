@@ -1,5 +1,6 @@
 // import { fileUpload } from "../controller/aiBlobStorageController.js";
 // import { azureTranslation } from "../utils/azureAiTranslatorUtils.js";
+import { logger } from "../server.js";
 import { initVisionPath } from "./translate-base.js";
 
 /**
@@ -42,7 +43,7 @@ export default async function handleImageTranslation(resJson,  jsonBody) {
 
     return response;
   } catch (error) {
-    console.error(error);
+    logger.error(error);
     throw new Error('Error on handleImageTranslation')
   }
 }
@@ -59,7 +60,7 @@ async function azureImageAnalyzer(url, fromLang) {
     text = (await initVisionPath(url, 'POST', fromLang)).data;
     // text = resData.readResult.content.replaceAll(/(\r\n|\n|\r)/gm, " ");
   } catch (error) {
-    console.error(error);
+    logger.error(error);
     throw new Error('Error on azureImageAnalyzer')
   }
     
