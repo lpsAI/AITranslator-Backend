@@ -2,6 +2,7 @@ import './env.js'
 import express from 'express';
 import aiRoutes from './routes/aiTranslationRoutes.js'
 import cors from 'cors';
+import compression from 'compression'
 
 const app = express();
 const port = process.env.NODE_PORT;
@@ -15,6 +16,8 @@ app.use(cors())
 app.use(express.json());
 
 app.use(express.urlencoded({ extended: true }))
+
+app.use(compression())
 
 app.use('/api', aiRoutes);
 
