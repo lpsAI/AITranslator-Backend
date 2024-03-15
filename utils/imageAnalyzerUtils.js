@@ -1,6 +1,6 @@
 // import { fileUpload } from "../controller/aiBlobStorageController.js";
-// import { azureTranslation } from "../utils/azureAiTranslatorUtils.js";
 import logger from "../logger/logger.js";
+import { detectLanguage } from "./azureAiTranslatorUtils.js";
 import { initVisionPath } from "./translate-base.js";
 
 /**
@@ -14,11 +14,6 @@ export default async function handleImageTranslation(resJson,  jsonBody) {
     let status = 200;
     const { fromLanguage, toLanguage } = jsonBody;
     const rawResult = await azureImageAnalyzer(url, fromLanguage);
-    // const translationTextResponse = await azureTranslation(
-    //   detectedText,
-    //   toLanguage,
-    //   fromLanguage
-    // );
 
     let detectedText = [];
     if (rawResult && rawResult.readResult) {
@@ -34,10 +29,15 @@ export default async function handleImageTranslation(resJson,  jsonBody) {
         
     detectedText = detectedText && detectedText.length != 0 ? detectedText.join(' ').trim() : ''
 
+    const detectPayload = [{ Text: detectedText}];
+
+    const translationTextResponse = await detectLanguage(detectPayload);
+
     response = {
       status,
       imageUrl: url,
       detectedText,
+      detectedLang: translationTextResponse[0].language
       // translationTextResponse: translationTextResponse[0].translations,
     };
 
