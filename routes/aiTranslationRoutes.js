@@ -2,7 +2,7 @@
 import express from 'express';
 import {  createTranslation, detectLang, transLiterate, getLanguages, getLocalLang } from '../controller/aiTranslationController.js'
 import { fileDownload, fileUpload, fileUploadOnly, initContainer, retrieveAllImgs } from '../controller/aiBlobStorageController.js';
-import { analyzeImage } from '../controller/aiImageAnalyzerController.js'
+import { analyzeImage, analyzeImageOnce } from '../controller/aiImageAnalyzerController.js'
 import { errorLoggerMiddleware, loggerMiddleware } from '../logger/logger.js';
 
 
@@ -25,6 +25,7 @@ router.get('/v1/images/all', initContainer, retrieveAllImgs)
 // For image analyzer
 // router.post('/v1/imageAnalyzer', initContainer, analyzeImage)
 router.post('/v1/imageAnalyzer', initContainer, fileUpload, analyzeImage)
+router.post('/v1/textDetectOnly', analyzeImageOnce)
 router.use(errorLoggerMiddleware);
 
 export default router;

@@ -51,25 +51,27 @@ export const initAZBlobStorage = () => {
  * 
  * @param {string} url
  * @param {'POST' | 'GET'} method
+ * @param {string} language
+ * @param {boolean} isOctet
  * @returns {Promise<import("axios").AxiosResponse>} 
  */
-export const initVisionPath = (url, method, language) => {
+export const initVisionPath = (url, method, language, isOctet) => {
    return axios({
     baseURL: `${visionEndpoint}`,
-    url: `/computervision/imageanalysis:analyze?api-version=${visionApiVersion}`,
+    url: `computervision/imageanalysis:analyze?api-version=${visionApiVersion}`,
     method,
     headers: {
         'Ocp-Apim-Subscription-Key': visionKey,
         // location required if you're using a multi-service or regional (not global) resource.
         'Ocp-Apim-Subscription-Region': region,
-        'Content-type': 'application/json',
+        'Content-type': isOctet ? 'application/octet-stream' : 'application/json',
         'X-ClientTraceId': v4().toString()
     },
     params: {
         features: ['read'].toString(), // ['caption', 'denseCaptions']
         language
     },
-    data: {url},
+    data: isOctet ? url : {url},
     responseType: 'json'
    })
 

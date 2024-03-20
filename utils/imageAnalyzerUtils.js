@@ -6,7 +6,7 @@ import { initVisionPath } from "./translate-base.js";
 /**
  * 
  */
-export default async function handleImageTranslation(resJson,  jsonBody) {
+export const handleImageTranslation = async (resJson,  jsonBody) => {
   let response;
   try {
     // const { resJson, jsonBody } = await fileUpload(req);
@@ -50,14 +50,62 @@ export default async function handleImageTranslation(resJson,  jsonBody) {
 
 /**
  * 
+ * @param {Buffer} imgBuffer 
+ * @param {{fromLanguage: string}} jsonBody 
+ * @returns 
+ */
+export const handleTextDectectionOnly = async (imgBuffer, jsonBody) => {
+  let response
+  let status = 200
+  const { fromLanguage } = jsonBody;
+
+  try {
+    const rawResult = await azureImageAnalyzer(imgBuffer, fromLanguage, true);
+
+    let detectedText = [];
+    if (rawResult && rawResult.readResult) {
+      rawResult.readResult.blocks.forEach(aBlock => {
+        aBlock.lines.forEach(aLine => {
+          detectedText.push(aLine.text);
+        })
+      })
+    } else {
+      status = 400;
+      detectedText = []
+    }
+
+    detectedText = detectedText && detectedText.length != 0 ? detectedText.join(' ').trim() : ''
+
+    const detectPayload = [{ Text: detectedText}];
+
+    const translationTextResponse = await detectLanguage(detectPayload);
+
+
+    response = {
+      status,
+      detectedText,
+      detectedLang: translationTextResponse[0].language
+      // translationTextResponse: translationTextResponse[0].translations,
+    };
+
+    return response;
+
+  } catch (error) {
+    logger.error(error);
+    throw new Error('Error on handleImageTranslation')
+  }
+}
+
+/**
+ * 
  * @param {string} url 
  * @param {string} fromLang 
  * @returns 
  */
-async function azureImageAnalyzer(url, fromLang) {
+async function azureImageAnalyzer(url, fromLang, isOctet = false) {
   let text;
   try {
-    text = (await initVisionPath(url, 'POST', fromLang)).data;
+    text = (await initVisionPath(url, 'POST', fromLang, isOctet)).data;
     // text = resData.readResult.content.replaceAll(/(\r\n|\n|\r)/gm, " ");
   } catch (error) {
     logger.error(error);
