@@ -13,7 +13,7 @@ export const handleImageTranslation = async (resJson,  jsonBody) => {
     const url = resJson.link;
     let status = 200;
     const { fromLanguage, toLanguage } = jsonBody;
-    const rawResult = await azureImageAnalyzer(url, fromLanguage);
+    const rawResult = await azureImageAnalyzer(url, fromLanguage, false);
 
     let detectedText = [];
     if (rawResult && rawResult.readResult) {
