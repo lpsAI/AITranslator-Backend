@@ -56,12 +56,13 @@ export const convertToWavFile = (req, res, next) => {
     initBusBoy.on('finish', () => {
       if (isWav) {
         processWavFiles(ffmpeg, `${tmpDir}/${mainFileName}`, outputFilePath, jsonBody, res)
-      } else if (isAudioVideo) {
-        convertToWavThenProcess(ffmpeg,  `${tmpDir}/${mainFileName}`, outputFilePath, jsonBody, res)
       } else {
-        res.writeHead(400, { 'Content-Type': 'application/json' });
-        res.end(JSON.stringify({ error: 'Unsupported file type' }));
+        convertToWavThenProcess(ffmpeg,  `${tmpDir}/${mainFileName}`, outputFilePath, jsonBody, res)
       }
+      // } else {
+      //   res.writeHead(400, { 'Content-Type': 'application/json' });
+      //   res.end(JSON.stringify({ error: 'Unsupported file type' }));
+      // }
     })
   });
 
