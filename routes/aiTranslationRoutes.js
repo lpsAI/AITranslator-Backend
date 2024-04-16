@@ -4,6 +4,7 @@ import {  createTranslation, detectLang, transLiterate, getLanguages, getLocalLa
 import { fileDownload, fileUpload, fileUploadOnly, initContainer, retrieveAllImgs } from '../controller/aiBlobStorageController.js';
 import { analyzeImage, analyzeImageOnce } from '../controller/aiImageAnalyzerController.js'
 import { errorLoggerMiddleware, loggerMiddleware } from '../logger/logger.js';
+import { convertToWavFile } from '../controller/aiAudioController.js';
 
 
 const router = express.Router();
@@ -27,6 +28,9 @@ router.get('/v1/images/all', initContainer, retrieveAllImgs)
 router.post('/v1/imageAnalyzer', initContainer, fileUpload, analyzeImage)
 router.post('/v1/textDetectOnly', analyzeImageOnce)
 // router.post('/v1/preprocessImg', preprocessImgs)
+
+// For audio process
+router.post('/v1/convertToWav', convertToWavFile)
 router.use(errorLoggerMiddleware);
 
 export default router;
