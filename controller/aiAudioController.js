@@ -42,6 +42,7 @@ export const convertToWavFile = (req, res, next) => {
     });
   
     initBusBoy.on('file', (fieldname, file, {encoding, filename, mimeType}) => {
+      file.setEncoding('binary');
       mainFileName = filename;
       if (mimeType === 'audio/wav') {
         isWav = true;
@@ -49,7 +50,7 @@ export const convertToWavFile = (req, res, next) => {
         isAudioVideo = true;
       }
       const tmpFilePath = `${tmpDir}/${mainFileName}`;
-      file.pipe(createWriteStream(tmpFilePath));
+      file.pipe(createWriteStream(tmpFilePath, {encoding: 'binary'}));
     })
 
     initBusBoy.on('finish', () => {
