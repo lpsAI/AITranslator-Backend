@@ -6,7 +6,7 @@ import { processSpeechToText } from "../utils/azureAiSpeechUtils.js";
 const ffmpegStatic = require('ffmpeg-static');
 const ffmpeg = require('fluent-ffmpeg');
 import logger from "../logger/logger.js";
-import { createWriteStream } from "node:fs";
+import { createWriteStream, writeFileSync } from "node:fs";
 import { dir, setGracefulCleanup } from "tmp";
 
 ffmpeg.setFfmpegPath(ffmpegStatic);
@@ -25,6 +25,7 @@ export const convertToWavFile = (req, res, next) => {
   let jsonBody = {sourceLang: '', targetLang: ''}
   let isWav = false;
   let isAudioVideo = false;
+  let base64data = '';
 
   dir({unsafeCleanup: true}, (err, tmpDir) => {
     if (err) {
@@ -40,17 +41,27 @@ export const convertToWavFile = (req, res, next) => {
     initBusBoy.on('field', (fieldname, val) => {
       jsonBody[fieldname] = val
     });
+
+
   
     initBusBoy.on('file', (fieldname, file, {encoding, filename, mimeType}) => {
       file.setEncoding('base64');
+
+      file.on('data', (data) => {
+        base64data += data;
+      });
+
       mainFileName = filename;
       if (mimeType === 'audio/wav') {
         isWav = true;
       } else if (mimeType.includes('audio') || mimeType.includes('video')) {
         isAudioVideo = true;
       }
+
+      const fileBuffer = Buffer.from(base64data, 'base64');
+
       const tmpFilePath = `${tmpDir}/${mainFileName}`;
-      file.pipe(createWriteStream(tmpFilePath, {encoding: 'base64'}));
+      file.pipe(writeFileSync(tmpFilePath, fileBuffer));
     })
 
     initBusBoy.on('finish', () => {
