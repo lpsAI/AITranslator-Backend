@@ -6,7 +6,7 @@ import { processSpeechToText } from "../utils/azureAiSpeechUtils.js";
 const ffmpegStatic = require('ffmpeg-static');
 const ffmpeg = require('fluent-ffmpeg');
 import logger from "../logger/logger.js";
-import { createWriteStream, writeFileSync } from "node:fs";
+import { createWriteStream } from "node:fs";
 import { dir, setGracefulCleanup } from "tmp";
 
 ffmpeg.setFfmpegPath(ffmpegStatic);
@@ -22,6 +22,7 @@ export const convertToWavFile = (req, res, next) => {
   const initBusBoy = busboy({ headers: req.headers });
  
   let mainFileName;
+  let mainMimeType;
   let jsonBody = {sourceLang: '', targetLang: ''}
   let isWav = false;
   let isAudioVideo = false;
@@ -45,35 +46,26 @@ export const convertToWavFile = (req, res, next) => {
 
   
     initBusBoy.on('file', (fieldname, file, {encoding, filename, mimeType}) => {
-      file.setEncoding('base64');
-
-      file.on('data', (data) => {
-        base64data += data;
-      });
-
       mainFileName = filename;
+      mainMimeType = mimeType;
       if (mimeType === 'audio/wav') {
         isWav = true;
       } else if (mimeType.includes('audio') || mimeType.includes('video')) {
         isAudioVideo = true;
       }
 
-      const fileBuffer = Buffer.from(base64data, 'base64');
-
-      const tmpFilePath = `${tmpDir}/${mainFileName}`;
-      file.pipe(writeFileSync(tmpFilePath, fileBuffer));
+      file.pipe(createWriteStream(`${tmpDir}/${mainFileName}`));
     })
 
     initBusBoy.on('finish', () => {
       if (isWav) {
         processWavFiles(ffmpeg, `${tmpDir}/${mainFileName}`, outputFilePath, jsonBody, res)
-      } else {
+      } else if (isAudioVideo) {
         convertToWavThenProcess(ffmpeg,  `${tmpDir}/${mainFileName}`, outputFilePath, jsonBody, res)
+      } else {
+        res.writeHead(400, { 'Content-Type': 'application/json' });
+        res.end(JSON.stringify({ error: 'Unsupported file type ' + mainMimeType }));
       }
-      // } else {
-      //   res.writeHead(400, { 'Content-Type': 'application/json' });
-      //   res.end(JSON.stringify({ error: 'Unsupported file type' }));
-      // }
     })
   });
 
